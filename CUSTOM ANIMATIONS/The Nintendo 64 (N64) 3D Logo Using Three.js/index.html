@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>3D Rotating Geometry Shape Using Three.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r71/three.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+  </head>
+
+  <body>
+    <script>
+      // Create a scene
+      const scene = new THREE.Scene();
+
+      // Create a camera
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        400
+      );
+      camera.position.z = 150;
+      scene.rotation.x = 0.45;
+
+      // Create cube geometries
+      function createCubeGeometry(width, height, depth, colors) {
+        const cubeGeometry = new THREE.BoxGeometry(width, height, depth);
+
+        for (let i = 0; i < cubeGeometry.faces.length; i++) {
+          cubeGeometry.faces[i].color.setHex(colors[i]);
+        }
+
+        return cubeGeometry;
+      }
+
+      // Cube color schemes
+      const blueScheme = [
+        0x011da9, 0x011da9, 0x011da9, 0x011da9, 0xffc001, 0xffc001, 0xffc001,
+        0xffc001, 0x069330, 0x069330, 0x069330, 0x069330,
+      ];
+      const redScheme = [
+        0xfe2015, 0xfe2015, 0x011da9, 0x011da9, 0xffc001, 0xffc001, 0xffc001,
+        0xffc001, 0x069330, 0x069330, 0x069330, 0x069330,
+      ];
+      const greenScheme = [
+        0x011da9, 0x011da9, 0x011da9, 0x011da9, 0xffc001, 0xffc001, 0xffc001,
+        0xffc001, 0xfe2015, 0xfe2015, 0x069330, 0x069330,
+      ];
+
+      // Create cube materials
+      const cubeMaterial = new THREE.MeshBasicMaterial({
+        vertexColors: THREE.FaceColors,
+      });
+
+      // Create cubes
+      const cubeData = [
+        {
+          geometry: createCubeGeometry(20, 75, 20, blueScheme),
+          position: [-30, 0, 30],
+        },
+        {
+          geometry: createCubeGeometry(20, 75, 20, blueScheme),
+          position: [30, 0, 30],
+        },
+        {
+          geometry: createCubeGeometry(20, 75, 20, blueScheme),
+          position: [-30, 0, -30],
+        },
+        {
+          geometry: createCubeGeometry(20, 75, 20, blueScheme),
+          position: [30, 0, -30],
+        },
+        {
+          geometry: createCubeGeometry(20, 83, 20, redScheme),
+          position: [0, 0, 30],
+          rotation: [0, 0, 0.73],
+        },
+        {
+          geometry: createCubeGeometry(20, 83, 20, redScheme),
+          position: [0, 0, -30],
+          rotation: [0, 0, 2.41],
+        },
+        {
+          geometry: createCubeGeometry(20, 83, 20, greenScheme),
+          position: [-30, 0, 0],
+          rotation: [2.41, 0, 0],
+        },
+        {
+          geometry: createCubeGeometry(20, 83, 20, greenScheme),
+          position: [30, 0, 0],
+          rotation: [0.73, 0, 0],
+        },
+      ];
+
+      const cubes = cubeData.map((data) => {
+        const cube = new THREE.Mesh(data.geometry, cubeMaterial);
+        cube.position.set(...data.position);
+
+        if (data.rotation) {
+          cube.rotation.set(...data.rotation);
+        }
+
+        return cube;
+      });
+
+      // Add cubes to the scene
+      cubes.forEach((cube) => {
+        scene.add(cube);
+      });
+
+      // Create a renderer
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // Render function
+      const render = () => {
+        requestAnimationFrame(render);
+        scene.rotation.y += 0.008;
+        renderer.render(scene, camera);
+      };
+
+      // Call the render function
+      render();
+    </script>
+  </body>
+</html>
